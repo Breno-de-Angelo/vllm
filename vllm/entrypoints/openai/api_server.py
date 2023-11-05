@@ -31,6 +31,8 @@ from vllm.sampling_params import SamplingParams
 from vllm.transformers_utils.tokenizer import get_tokenizer
 from vllm.utils import random_uuid
 
+from vllm.model_executor.adapters import lora
+
 try:
     import fastchat
     from fastchat.conversation import Conversation, SeparatorStyle
@@ -623,6 +625,9 @@ if __name__ == "__main__":
     engine = AsyncLLMEngine.from_engine_args(engine_args)
     engine_model_config = asyncio.run(engine.get_model_config())
     max_model_len = engine_model_config.max_model_len
+
+    # Add LoRA adapter
+    lora.LoRAModel.from_pretrained(engine.engine.workers[0].model, "/home/hercules/llama-2-hf/Llama-2-7b-16k-sft")
 
     # A separate tokenizer to map token IDs to strings.
     tokenizer = get_tokenizer(engine_args.tokenizer,

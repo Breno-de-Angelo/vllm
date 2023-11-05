@@ -11,6 +11,8 @@ from vllm.engine.async_llm_engine import AsyncLLMEngine
 from vllm.sampling_params import SamplingParams
 from vllm.utils import random_uuid
 
+from vllm.model_executor.adapters import lora
+
 TIMEOUT_KEEP_ALIVE = 5  # seconds.
 TIMEOUT_TO_PREVENT_DEADLOCK = 1  # seconds.
 app = FastAPI()
@@ -78,6 +80,9 @@ if __name__ == "__main__":
 
     engine_args = AsyncEngineArgs.from_cli_args(args)
     engine = AsyncLLMEngine.from_engine_args(engine_args)
+
+    # Add LoRA adapter
+    lora.LoRAModel.from_pretrained(engine.engine.workers[0].model, "/home/hercules/llama-2-hf/Llama-2-7b-16k-sft")
 
     uvicorn.run(app,
                 host=args.host,
